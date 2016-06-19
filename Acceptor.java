@@ -1,7 +1,6 @@
 import java.net.SocketAddress;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -14,17 +13,11 @@ public class Acceptor extends ChannelInitializer<SocketChannel> implements Runna
 	
 	private EventLoopGroup acceptorGroup, clientGroup;
 	private Channel acceptor;
-	private final int channel;
 	
 	private SocketAddress socketAddress;
 	
-	public Acceptor(SocketAddress socketAddress, int channel) {
-		this.socketAddress = socketAddress;
-		this.channel = channel;
-	}
-	
 	public Acceptor(SocketAddress socketAddress) {
-		this(socketAddress, -1);
+		this.socketAddress = socketAddress;
 	}
 
 	@Override
@@ -37,7 +30,6 @@ public class Acceptor extends ChannelInitializer<SocketChannel> implements Runna
 				.channel(NioServerSocketChannel.class)
 				.childHandler(this)
 				.option(ChannelOption.SO_BACKLOG, 64)
-				//.option(ChannelOption.ALLOCATOR, new LittleEndianByteBufAllocator(UnpooledByteBufAllocator.DEFAULT))
 				.childOption(ChannelOption.SO_KEEPALIVE, true)
 				.bind(socketAddress).syncUninterruptibly().channel();
 	}

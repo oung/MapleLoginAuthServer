@@ -20,7 +20,7 @@ public class MaplePacketDecoder extends ReplayingDecoder<Void> {
 		// Header
 		short packetSize = in.readShort();
 		short opcode = in.readShort();
-		System.out.println("Header received. PacketSize " + packetSize + " Opcode " + opcode);
+		//System.out.println("Header received. PacketSize " + packetSize + " Opcode " + opcode);
 
 		// Body
 		byte[] decryptedBuffer = new byte[packetSize - 16];
@@ -32,7 +32,7 @@ public class MaplePacketDecoder extends ReplayingDecoder<Void> {
 		long xorValue = in.readUnsignedInt();
 		in.readInt();
 		in.readBytes(decryptedBuffer);
-		System.out.println(checkCode + " " + length + " " + flag + " " + originalSize + " " + xorValue);
+		//System.out.println(checkCode + " " + length + " " + flag + " " + originalSize + " " + xorValue);
 		
 		if ((flag & 0x02) != 0) {
 			decryptedBuffer = decrypt(decryptedBuffer, xorValue);
@@ -41,10 +41,8 @@ public class MaplePacketDecoder extends ReplayingDecoder<Void> {
 		byte[] decodedPacket = new byte[decryptedBuffer.length + 2];
 		decodedPacket[0] = (byte) opcode;
 		System.arraycopy(decryptedBuffer, 0, decodedPacket, 2, decryptedBuffer.length);
-		System.out.println(HexTool.toString(decodedPacket));
+		//System.out.println(HexTool.toString(decodedPacket));
 		objects.add(decodedPacket);
-	
-		System.out.println("done decoding");
 	}
 	
 	private int readSmallSize(ByteBuf in) {
@@ -66,17 +64,6 @@ public class MaplePacketDecoder extends ReplayingDecoder<Void> {
 			temp2 ^= Integer.toUnsignedLong((int)(temp ^ xorTable[i & 15] ^ seed));
 			MapleCrypto.setBytes(temp2, output, i*4);
 			temp = (int) temp2;
-		}
-		
-		return cleanPacket(output);
-	}
-	
-	private byte[] cleanPacket(byte[] packet) {
-		int length = packet[4] /* + packet[(packet[4] * 2) + 1] */;
-		byte[] output = new byte[length + 2];
-		output[0] = (byte) length;
-		for (int i = 0; i < length; i++) {
-			output[i + 2] = packet[6 + (2 * i)];
 		}
 		
 		return output;

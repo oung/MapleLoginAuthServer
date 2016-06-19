@@ -140,6 +140,11 @@ public class MaplePacketWriter {
             write(0);
         }
     }
+    
+    public void writeLoginAuthString(String s) {
+    	writeShort((short) s.length()/2);
+    	writeAsciiString(s);
+    }
 
     public final void writeNullTerminatedCharString(String s) {
         byte[] strBytes = s.getBytes(ASCII);
@@ -147,6 +152,11 @@ public class MaplePacketWriter {
             write(b);
             write(0);
         }
+    }
+    
+    public void writeMapleNullTerminatedCharString(String s) {
+    	writeShort((short) s.length());
+    	writeNullTerminatedCharString(s);
     }
 
     public final void writeBoolean(boolean b) {
@@ -200,5 +210,7 @@ public class MaplePacketWriter {
     public void writeInt(long MAX_VALUE) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+   
 
 }

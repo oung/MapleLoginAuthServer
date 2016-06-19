@@ -81,6 +81,10 @@ public class MaplePacketReader {
     public String readMapleAsciiString() {
         return readAsciiString(readShort());
     }
+    
+    public String readLoginAuthString() {
+    	return readAsciiString(readShort() * 2);
+    }
 
     public long getBytesRead() {
         return buffer.readerIndex();
